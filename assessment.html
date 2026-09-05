@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartHealthAI Assessment</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>HeartHealthAI</h1>
+        <p class="subtitle"> <i>
+            Daily lifestyle and symptom-based heart-health awareness
+        </i></p>
+
+        <form id="healthForm">
+
+            <h2><u>Basic Details</u></h2>
+
+            <label>Age</label>
+            <input type="number" id="age" min="1" max="120" required>
+            <br> <br>
+            <label>Height in centimetres</label>
+            <input type="number" id="height" min="50" max="250"
+                   placeholder="Optional">
+            <br><br>
+            <label>Weight in kilograms</label>
+            <input type="number" id="weight" min="10" max="300"
+                   placeholder="Optional">
+            <br><br><br>
+            <h2><u>Daily Routine</u></h2>
+
+            <label>How physically active are you?</label>
+            <select id="activity">
+                <option value="regular">Regular exercise or walking</option>
+                <option value="sometimes">Sometimes active</option>
+                <option value="low">Very little physical activity</option>
+            </select>
+            <br><br>
+            <label>Do you smoke or consume tobacco?</label>
+            <select id="smoking">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+            <br><br>
+            <label>How is your usual food habit?</label>
+            <select id="diet">
+                <option value="healthy">Mostly healthy food</option>
+                <option value="mixed">Mixed food habits</option>
+                <option value="unhealthy">Frequent oily, salty or packaged food</option>
+            </select>
+            <br><br>
+            <label>How many hours do you sleep?</label>
+            <select id="sleep">
+                <option value="good">7–9 hours</option>
+                <option value="medium">5–6 hours</option>
+                <option value="poor">Less than 5 hours</option>
+            </select>
+            <br><br>
+            <label>How would you describe your stress level?</label>
+            <select id="stress">
+                <option value="low">Low</option>
+                <option value="medium">Moderate</option>
+                <option value="high">High</option>
+            </select>
+            <br><br>
+            <h2><u>Existing Conditions</u></h2>
+
+            <label>Do you have diabetes?</label>
+            <select id="diabetes">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+                <option value="unknown">I am not sure</option>
+            </select>
+            <br><br>
+            <label>Do you have high blood pressure?</label>
+            <select id="hypertension">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+                <option value="unknown">I am not sure</option>
+            </select>
+            <br><br>
+            <label>Is there a family history of heart disease?</label>
+            <select id="familyHistory">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+                <option value="unknown">I am not sure</option>
+            </select>
+            <br><br>
+            <h2><u>Symptoms</u></h2>
+
+            <label>Are you currently having severe or persistent chest pain?</label>
+            <select id="chestPain">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+
+            <label>Do you experience unusual breathlessness?</label>
+            <select id="breathlessness">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+            <br><br>
+            <label>Do you experience fainting or severe dizziness?</label>
+            <select id="fainting">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+            <br><br>
+
+            <label>Do you experience unusual tiredness or weakness?</label>
+            <select id="tiredness">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+            <br><br>
+
+            <label>Do you experience fast or irregular heartbeat?</label>
+            <select id="palpitations">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+            <br><br>
+            <button type="submit">Check My Results</button>
+
+        </form>
+        <p class="editor"> <i> developed by Aryan Singh </i></p>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        document.getElementById("healthForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let age = Number(document.getElementById("age").value);
+            let height = Number(document.getElementById("height").value);
+            let weight = Number(document.getElementById("weight").value);
+
+            let activity = document.getElementById("activity").value;
+            let smoking = document.getElementById("smoking").value;
+            let diet = document.getElementById("diet").value;
+            let sleep = document.getElementById("sleep").value;
+            let stress = document.getElementById("stress").value;
+
+            let diabetes = document.getElementById("diabetes").value;
+            let hypertension = document.getElementById("hypertension").value;
+            let familyHistory = document.getElementById("familyHistory").value;
+
+            let chestPain = document.getElementById("chestPain").value;
+            let breathlessness = document.getElementById("breathlessness").value;
+            let fainting = document.getElementById("fainting").value;
+            let tiredness = document.getElementById("tiredness").value;
+            let palpitations = document.getElementById("palpitations").value;
+
+            let riskFactors = [];
+            let recommendations = [];
+            let bmiText = "BMI cannot be calculated because height or weight was not provided.";
+            let riskLevel = "Low";
+            let medicalAdvice = "";
+
+            // BMI calculation
+            if (height > 0 && weight > 0) {
+                let heightInMetres = height / 100;
+                let bmi = weight / (heightInMetres * heightInMetres);
+
+                if (bmi < 18.5) {
+                    bmiText = bmi.toFixed(1) + " — Underweight";
+                    riskFactors.push("Your BMI is below the usual healthy range.");
+                } else if (bmi < 25) {
+                    bmiText = bmi.toFixed(1) + " — Normal range";
+                } else if (bmi < 30) {
+                    bmiText = bmi.toFixed(1) + " — Overweight";
+                    riskFactors.push("Your BMI is in the overweight range.");
+                } else {
+                    bmiText = bmi.toFixed(1) + " — Obesity range";
+                    riskFactors.push("Your BMI is in the obesity range.");
+                }
+            }
+
+            // Lifestyle risk factors
+            if (activity === "low") {
+                riskFactors.push("Very low physical activity");
+                recommendations.push("Walk or exercise regularly according to your ability.");
+            }
+
+            if (activity === "sometimes") {
+                riskFactors.push("Physical activity is not regular");
+                recommendations.push("Try to make walking or exercise a regular habit.");
+            }
+
+            if (smoking === "yes") {
+                riskFactors.push("Smoking or tobacco use");
+                recommendations.push("Avoid smoking and tobacco products.");
+            }
+
+            if (diet === "unhealthy") {
+                riskFactors.push("Frequent oily, salty or packaged food");
+                recommendations.push("Reduce excess salt, fried food and packaged food.");
+            }
+
+            if (diet === "mixed") {
+                recommendations.push("Include more fruits, vegetables and whole grains.");
+            }
+
+            if (sleep === "poor") {
+                riskFactors.push("Very poor sleep duration");
+                recommendations.push("Try to maintain a regular sleep schedule.");
+            }
+
+            if (sleep === "medium") {
+                riskFactors.push("Sleep duration may be insufficient");
+                recommendations.push("Try to gradually improve your sleep duration.");
+            }
+
+            if (stress === "high") {
+                riskFactors.push("High stress level");
+                recommendations.push("Use healthy stress-management activities such as walking, breathing exercises or talking to someone.");
+            }
+
+            if (stress === "medium") {
+                recommendations.push("Take regular breaks and manage daily stress.");
+            }
+
+            // Existing conditions
+            if (diabetes === "yes") {
+                riskFactors.push("Known diabetes");
+                recommendations.push("Monitor diabetes and follow your doctor's advice.");
+            }
+
+            if (hypertension === "yes") {
+                riskFactors.push("Known high blood pressure");
+                recommendations.push("Monitor blood pressure regularly.");
+            }
+
+            if (familyHistory === "yes") {
+                riskFactors.push("Family history of heart disease");
+            }
+
+            // Emergency warning signs
+            let emergency = false;
+
+            if (chestPain === "yes" || fainting === "yes") {
+                emergency = true;
+            }
+
+            // Medical attention logic
+            if (emergency) {
+                riskLevel = "Urgent";
+                medicalAdvice = `
+                    <div class="urgent">
+                        <h3>Urgent Medical Attention Needed</h3>
+                        <p>
+                            Severe or persistent chest pain, fainting or similar
+                            symptoms may indicate a serious medical problem.
+                            Contact emergency medical services or visit the
+                            nearest emergency department immediately.
+                        </p>
+                    </div>
+                `;
+            } else if (
+                breathlessness === "yes" ||
+                palpitations === "yes" ||
+                diabetes === "yes" ||
+                hypertension === "yes" ||
+                riskFactors.length >= 5
+            ) {
+                riskLevel = "Moderate to High";
+                medicalAdvice = `
+                    <div class="warning">
+                        <h3>Medical Consultation Recommended</h3>
+                        <p>
+                            Your answers show symptoms or risk factors that
+                            should be discussed with a qualified healthcare
+                            professional. A doctor may recommend blood pressure
+                            measurement, blood tests, ECG or other examinations.
+                        </p>
+                    </div>
+                `;
+            } else if (riskFactors.length > 0) {
+                riskLevel = "Moderate";
+                medicalAdvice = `
+                    <div class="notice">
+                        <h3>Routine Health Check-up Recommended</h3>
+                        <p>
+                            Your answers show some lifestyle-related risk factors.
+                            Consider a routine health check-up and improve your
+                            daily habits.
+                        </p>
+                    </div>
+                `;
+            } else {
+                riskLevel = "Low";
+                medicalAdvice = `
+                    <div class="good">
+                        <h3>No Major Warning Signs Reported</h3>
+                        <p>
+                            Your answers do not show major warning signs at present.
+                            Continue healthy habits and attend regular check-ups.
+                        </p>
+                    </div>
+                `;
+            }
+
+            // Build risk-factor list
+            let riskList = "";
+
+            if (riskFactors.length === 0) {
+                riskList = "<li>No major risk factors reported.</li>";
+            } else {
+                riskFactors.forEach(function(factor) {
+                    riskList += "<li>" + factor + "</li>";
+                });
+            }
+
+            // Build recommendation list
+            let recommendationList = "";
+
+            if (recommendations.length === 0) {
+                recommendationList = "<li>Continue your current healthy habits.</li>";
+            } else {
+                recommendations.forEach(function(item) {
+                    recommendationList += "<li>" + item + "</li>";
+                });
+            }
+
+            // Display results
+            document.getElementById("results").innerHTML = `
+                <div class="result-card">
+                    <h2>Your Heart Health Awareness Report</h2>
+
+                    <h3>BMI</h3>
+                    <p>${bmiText}</p>
+
+                    <h3>Risk Level</h3>
+                    <p class="risk-level">${riskLevel}</p>
+
+                    ${medicalAdvice}
+
+                    <h3>Risk Factors Detected</h3>
+                    <ul>
+                        ${riskList}
+                    </ul>
+
+                    <h3>Recommended Actions</h3>
+                    <ul>
+                        ${recommendationList}
+                    </ul>
+
+                    <div class="disclaimer">
+                        <strong>Important:</strong>
+                        This tool provides general health information based on
+                        self-reported answers. It does not diagnose heart disease
+                        and cannot replace a doctor, ECG, blood test or clinical
+                        examination.
+                    </div>
+                </div>
+            `;
+
+            window.scrollTo({
+                top: document.getElementById("results").offsetTop,
+                behavior: "smooth"
+            });
+        });
+    </script>
+
+</body>
+</html>
+
